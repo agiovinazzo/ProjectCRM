@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+<title>Offerta</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="main.css"/>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="jquery-3.6.0.js"></script>
+
+<script>
+	$(document).ready(function() {
+		lista();
+	});
+
+	function lista() {
+		$("body").empty();
+		$.get(
+						"http://localhost:8081/offers",
+						function(data, status) {
+							var cnt = data.length;
+							var tr = "";
+
+							var table = "<div class='row'>"
+									+ "<div class='col-4'></div>"
+									+ "<div class='col-4 text-center h2'>" + "Offerte" + "</div>"
+									+ "<div class='col-2'></div>"
+									+ "<div class='col-2 text-center'><br /><button class='btn btn-success btn-sm' onclick='inserimento()'><i class='fa fa-plus'></i> aggiungi</button></div>"
+									+ "</div> <div>"
+									+ "<table class='table table-responsive'>" + "<thead>" + "<tr>"
+									+ "<th>ID OFFERTA</th>"
+									+ "<th>NOME OFFERTA</th>"
+									+ "<th>INIZIO OFFERTA</th>"
+									+ "<th>FINE OFFERTA</th>" + "<th></th>"
+									+ "<th></th>" + "</tr>" + "</thead>"
+									+ "<tbody id='tbody'>"
+									+ "</tbody>" + "</table>"
+									+ "<a href='/' style='text-decoration: none'>Torna alla Homepage &nbsp &nbsp</a>"
+									+ "<a href='/offers/excel' style='text-decoration: none'>Download Excel &nbsp &nbsp</a>"
+									+ "<a href='/offers/pdf' style='text-decoration: none'>Download PDF</a>"
+									+ "</div>";
+
+							console.log('COUNT = ' + cnt);
+							$("body").append(table);
+							
+							for (let i = 0; i < cnt; i++) {
+
+								var offerId = data[i].offerId;
+								var descOffer = data[i].descOffer;
+								var start = data[i].start;
+								var end = data[i].end;
+
+								tr = tr
+										+ "<tr><td>"
+										+ offerId
+										+ "</td><td>"
+										+ descOffer
+										+ "</td><td>"
+										+ start
+										+ "</td><td>"
+										+ end
+										+ "</td><td><button class='btn btn-primary' onclick='modifica("
+										+ JSON.stringify(data[i])
+										+ ")'><i class='fa fa-edit'></i> modifica</button> </td>"
+										+ "</td><td><button class='btn btn-danger' onclick='elimina("
+										+ JSON.stringify(data[i])
+										+ ")'><i class='fa fa-trash'></i> elimina</button> </td></tr>";
+							}
+							$("#tbody").append(tr);
+						});
+	}
+
+	function modifica(offer) {		
+		$("body").empty();
+
+		var form = "<div class='text-center h2'>Modifica Offerta " + offer.offerId + "</div>"
+				+ "<div>"
+				+ "<table class='table text-center'>"
+				+ "<tr><th>Nome Offerta</th><td>"
+				+ "<input type='text' id='descOffer' name='descOffer' value='" + offer.descOffer + "'>" 
+				+ "</td></tr>"
+				+ "<tr><th>Inizio Offerta</th><td>"
+				+ "<input type='date' id='start' name='start' value='" + offer.start + "'>"
+				+ "</td></tr>"
+				+ "<tr><th>Fine Offerta</th><td>"
+				+ "<input type='date' id='end' name='end' value='" + offer.end + "'>"
+				+ "</td></tr>"
+				+ "</table>"
+				+ "</div> <div class='text-center'>"
+				+ "<button class='btn btn-primary' onclick='submitOffer(" + offer.offerId + ")'><i class='fa fa-edit'></i> conferma</button> &nbsp;"
+				+ "<button class='btn btn-secondary' onclick='lista()'><i class='fa fa-close'></i> annulla</button>"
+				+ "</div>";
+
+		$("body").append(form);
+		
+	}
+	
+	function inserimento() {		
+		$("body").empty();
+
+		var form = "<div class='text-center h2'>Inserisci Offerta </div>"
+				+ "<div class='row'>"
+				+ "<div class='col-6'>"
+				+ "<table class='table text-center'>"
+				+ "<tr><th>Nome Offerta</th><td>"
+				+ "<input type='text' id='descOffer' name='descOffer' value=''>" 
+				+ "</td></tr>"
+				+ "<tr><th>Inizio Offerta</th><td>"
+				+ "<input type='date' id='start' name='start' value=''>"
+				+ "</td></tr>"
+				+ "<tr><th>Fine Offerta</th><td>"
+				+ "<input type='date' id='end' name='end' value=''>"
+				+ "</td></tr>"
+				+ "</table>"
+				+ "</div>"
+				+ "</div>"
+				+ "<div class='text-center'>"
+				+ "<button class='btn btn-primary' onclick='submitInserimentoOffer()'><i class='fa fa-plus'></i> inserisci</button> &nbsp;"
+				+ "<button class='btn btn-secondary' onclick='lista()'><i class='fa fa-close'></i> annulla</button>"
+				+ "</div>";
+
+		$("body").append(form);
+		
+	}
+	
+	function submitOffer(offerId) {
+		
+		var dataSubmit = "{"
+						    + "\"descOffer\":" + "\"" + $("#descOffer").val() + "\","
+						    + "\"start\":" + "\"" + $("#start").val() + "\","
+						    + "\"end\":" + "\"" + $("#end").val() + "\""
+						 +"}";
+			
+		
+		
+		$.ajax({
+	        type: "PUT",
+	        url: "http://localhost:8081/offers/" + offerId,
+	        contentType: "application/json",
+	        data: dataSubmit,
+	        success: function(data)
+	        {
+	          
+	          lista();
+	        }
+	    });
+		
+	}
+	function submitInserimentoOffer() {
+			
+			var dataSubmit = "{"
+							    + "\"descOffer\":" + "\"" + $("#descOffer").val() + "\","
+							    + "\"start\":" + "\"" + $("#start").val() + "\","
+							    + "\"end\":" + "\"" + $("#end").val() + "\""
+							 +"}";
+				
+			
+			
+			$.ajax({
+		        type: "POST",
+		        url: "http://localhost:8081/offers/",
+		        contentType: "application/json",
+		        data: dataSubmit,
+		        success: function(data)
+		        {
+		          
+		          lista();
+		        }
+		    });
+			
+		}
+	function elimina(offer) {
+		
+		$.ajax({
+			type : "DELETE",
+			url : "http://localhost:8081/offers/" + offer.offerId,
+			contentType : "application/json",
+			success : function(data) {
+			
+				
+				lista();
+			},
+			error: function(error) {
+				console.log(error);
+			}
+		});
+	}
+</script>
+
+</head>
+<body>
+
+
+
+
+
+</body>
+</html>

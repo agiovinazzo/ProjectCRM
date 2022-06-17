@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+<title>Cliente</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="main.css"/>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="jquery-3.6.0.js"></script>
+
+<script>
+	$(document).ready(function() {
+		lista();
+	});
+
+	function lista() {
+		$("body").empty();
+		$.get(
+						"http://localhost:8081/customers",
+						function(data, status) {
+							var cnt = data.length;
+							var tr = "";
+
+							var table = "<div class='row'>"
+									+ "<div class='col-4'></div>"
+									+ "<div class='col-4 text-center h2'>" + "Clienti" + "</div>"
+									+ "<div class='col-2'></div>"
+									+ "<div class='col-2 text-center'><br /><button class='btn btn-success btn-sm' onclick='inserimento()'><i class='fa fa-plus'></i> aggiungi</button></div>"
+									+ "</div> <div>"
+									+ "<table class='table table-responsive'>" + "<thead>" + "<tr>"
+									+ "<th>ID CLIENTE</th>"
+									+ "<th>NOME E COGNOME</th>"
+									+ "<th>DATA NASCITA</th>"
+									+ "<th>INDIRIZZO</th>"
+									+ "<th>TELEFONO</th>"
+									+ "<th>E-MAIL</th>"
+									+ "<th>OFFERTA</th>" + "<th></th>"
+									+ "<th></th>" + "</tr>" + "</thead>"
+									+ "<tbody id='tbody'>"
+									+ "</tbody>" + "</table>"
+									+ "<a href='/' style='text-decoration: none'>Torna alla Homepage &nbsp &nbsp</a>"
+									+ "<a href='/customers/excel' style='text-decoration: none'>Download Excel &nbsp &nbsp</a>"
+									+ "<a href='/customers/pdf' style='text-decoration: none'>Download PDF</a>"
+									+ "</div>";
+
+
+							console.log('COUNT = ' + cnt);
+							$("body").append(table);
+							
+							for (let i = 0; i < cnt; i++) {
+
+								var customerId = data[i].customerId;
+								var fullName = data[i].fullName;
+								var birthDate = data[i].birthDate;
+								var address = data[i].address;
+								var telephone = data[i].telephone;
+								var email = data[i].email;
+								var descOffer;
+								
+								if(data[i].offerId != null) {
+									descOffer = data[i].offerId.descOffer;
+								} else {
+									descOffer = "";
+								}
+
+								tr = tr
+										+ "<tr><td>"
+										+ customerId
+										+ "</td><td>"
+										+ fullName
+										+ "</td><td>"
+										+ birthDate
+										+ "</td><td>"
+										+ address
+										+ "</td><td>"
+										+ telephone
+										+ "</td><td>"
+										+ email
+										+ "</td><td>"
+										+ descOffer
+										+ "</td><td><button class='btn btn-primary' onclick='modifica("
+										+ JSON.stringify(data[i])
+										+ ")'><i class='fa fa-edit'></i> modifica</button> </td>"
+										+ "</td><td><button class='btn btn-danger' onclick='elimina("
+										+ JSON.stringify(data[i])
+										+ ")'><i class='fa fa-trash'></i> elimina</button> </td></tr>";
+							}
+							$("#tbody").append(tr);
+						});
+	}
+
+	function modifica(customer) {		
+		$("body").empty();
+
+		var form = "<div class='text-center h2'>Modifica Cliente " + customer.customerId + "</div>"
+				+ "<div>"
+				+ "<table class='table text-center'>"
+				+ "<tr><th>Nome E Cognome</th><td>"
+				+ "<input type='text' id='fullName' name='fullName' value='" + customer.fullName + "'>" 
+				+ "</td></tr>"
+				+ "<tr><th>Data Di Nascita</th><td>"
+				+ "<input type='date' id='birthDate' name='birthDate' value='" + customer.birthDate + "'>"
+				+ "</td></tr>"
+				+ "<tr><th>Indirizzo</th><td>"
+				+ "<input type='text' id='address' name='address' value='' placeholder='indirizzo italiano' " + customer.address + "'>"
+				+ "</td></tr>"
+				+ "</td></tr>"
+				+ "<tr><th>Telefono</th><td>"
+				+ "<input type='text' id='telephone' name='telephone' value='" + customer.telephone + "'>"
+				+ "<tr><th>E-mail</th><td>"
+				+ "<input type='email' id='email' name='email' value='" + customer.email + "'>"
+				+ "</td></tr>"
+				+ "<tr><th>Offerta</th><td>"
+				+ "<input type='text' id='offerId' name='offerId' value='" + customer.offerId.offerId + "'>"
+				+ "</td></tr>"
+				+ "</table>"
+				+ "</div> <div class='text-center'>"
+				+ "<button class='btn btn-primary' onclick='submitCustomer(" + customer.customerId + ")'><i class='fa fa-edit'></i> conferma</button> &nbsp;"
+				+ "<button class='btn btn-secondary' onclick='lista()'><i class='fa fa-close'></i> annulla</button>"
+				+ "</div>";
+
+		$("body").append(form);
+		
+	}
+	
+	function inserimento() {		
+		$("body").empty();
+
+		var form = "<div class='text-center h2'>Inserisci Cliente </div>"
+				+ "<div class='row'>"
+				+ "<div class='col-6'>"
+				+ "<table class='table text-center'>"
+				+ "<tr><th>Nome E Cognome</th><td>"
+				+ "<input type='text' id='fullName' name='fullName' value=''>" 
+				+ "</td></tr>"
+				+ "<tr><th>Data Di Nascita</th><td>"
+				+ "<input type='date' id='birthDate' name='birthDate' value=''>"
+				+ "</td></tr>"
+				+ "<tr><th>Indirizzo</th><td>"
+				+ "<input type='text' id='address' name='address' value='' placeholder='indirizzo italiano'>"
+				+ "</td></tr>"
+				+ "<tr><th>Telefono</th><td>"
+				+ "<input type='text' id='telephone' name='telephone' value=''>"
+				+ "</td></tr>"
+				+ "<tr><th>E-mail</th><td>"
+				+ "<input type='email' id='email' name='email' value=''>"
+				+ "</td></tr>"
+				+ "<tr><th>Offerta</th><td>"
+				+ "<input type='text' id='offerId' name='offerId' value=''>"
+				+ "</td></tr>"
+				+ "</table>"
+				+ "</div>"
+				+ "</div>"
+				+ "<div class='text-center'>"
+				+ "<button class='btn btn-primary' onclick='submitInserimentoCustomer()'><i class='fa fa-plus'></i> inserisci</button> &nbsp;"
+				+ "<button class='btn btn-secondary' onclick='lista()'><i class='fa fa-close'></i> annulla</button>"
+				+ "</div>";
+
+		$("body").append(form);
+		
+	}
+	
+	
+	function submitCustomer(customerId) {
+		
+		var dataSubmit = "{"
+						    + "\"fullName\":" + "\"" + $("#fullName").val() + "\","
+						    + "\"birthDate\":" + "\"" + $("#birthDate").val() + "\","
+						    + "\"address\":" + "\"" + $("#address").val() + "\","
+						    + "\"telephone\":" + "\"" + $("#telephone").val() + "\","
+						    + "\"email\":" + "\"" + $("#email").val() + "\","
+						    + "\"offerId\":" + "\"" + $("#offerId").val() + "\""
+						 +"}";
+			
+		
+		
+		$.ajax({
+	        type: "PUT",
+	        url: "http://localhost:8081/customers/" + customerId,
+	        contentType: "application/json",
+	        data: dataSubmit, 
+	        success: function(data)
+	        {
+	          
+	          lista();
+	        }
+	    });
+	}
+	
+	
+	function submitInserimentoCustomer() {
+			
+			var dataSubmit = "{"
+			    + "\"fullName\":" + "\"" + $("#fullName").val() + "\","
+			    + "\"birthDate\":" + "\"" + $("#birthDate").val() + "\","
+			    + "\"address\":" + "\"" + $("#address").val() + "\","
+			    + "\"telephone\":" + "\"" + $("#telephone").val() + "\","
+			    + "\"email\":" + "\"" + $("#email").val() + "\","
+			    + "\"offerId\":" + "\"" + $("#offerId").val() + "\""
+				 +"}";
+				
+			
+			
+			$.ajax({
+		        type: "POST",
+		        url: "http://localhost:8081/customers/",
+		        contentType: "application/json",
+		        data: dataSubmit,
+		        success: function(data)
+		        {
+		          
+		          lista();
+		        }
+		    });
+			
+		}
+	function elimina(customer) {
+		
+		$.ajax({
+			type : "DELETE",
+			url : "http://localhost:8081/customers/" + customer.customerId,
+			contentType : "application/json",
+			success : function(data) {
+			
+				lista();
+			},
+			error: function(error) {
+				console.log(error);
+			}
+		});
+	}
+</script>
+
+</head>
+<body>
+
+
+
+
+
+</body>
+</html>

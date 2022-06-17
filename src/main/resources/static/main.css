@@ -1,0 +1,73 @@
+
+body {
+	background-color: #272727;
+	color: #F4AE27;
+}
+
+#global {
+	
+    text-align: center;
+    border: 1px solid #dedede;
+    background: #efefef;
+    width: 560px;
+    padding: 20px;
+    margin: 100px auto;
+}
+
+th, td {
+		color: #f6f4e6;
+}
+
+
+form {
+  font:100% verdana;
+  min-width: 500px;
+  max-width: 600px;
+  width: 560px;
+  
+}
+
+form fieldset {
+  border-color: #bdbebf;
+  border-width: 3px;
+  margin: 0;
+  
+}
+
+legend {
+    font-size: 1.3em;
+    color: #f6f4e6;
+}
+
+form label { 
+    width: 250px;
+    display: block;
+    float: left;
+    text-align: right;
+    padding: 2px;
+}
+
+#buttons {
+    text-align: right;
+}
+.error {
+    color: red;
+    font-size: 9pt;	
+}
+
+a {
+	color: #F4AE27;
+}
+
+a:hover {
+	color: #EC751A;
+}
+
+table {
+	background: linear-gradient(to top left, #EC751A, #F4AE27);
+	margin: auto;
+	text-align:center;
+	table-layout:fixed;
+	margin-top:50px;
+	
+}
